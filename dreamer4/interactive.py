@@ -164,7 +164,10 @@ def load_task_action_dim(tasks_json: str, task: str, *, default_dim: int = 16) -
 
 def find_episode_starts(data_dir: str, task: str) -> List[int]:
     path = os.path.join(data_dir, f"{task}.pt")
-    td = torch.load(path, map_location="cpu", weights_only=False)
+    try:
+        td = torch.load(path, map_location="cpu", weights_only=False)
+    except FileNotFoundError:
+        return [0]
     ep = td["episode"]
     if hasattr(ep, "detach"):
         ep = ep.detach().cpu()
@@ -786,8 +789,8 @@ def main():
     p.add_argument("--task", type=str, default="finger-turn-hard")
 
     # data
-    p.add_argument("--data_dir", type=str, default="/<path>/data")   # path to raw data
-    p.add_argument("--frames_dir", type=str, default="/<path>/frames128")   # path to processed frames
+    p.add_argument("--data_dir", type=str, default="./data")   # path to raw data
+    p.add_argument("--frames_dir", type=str, default="./frames128")   # path to processed frames
     p.add_argument("--tasks_json", type=str, default="../tasks.json")   # task metadata
     p.add_argument("--shard_size", type=int, default=2048)
 
