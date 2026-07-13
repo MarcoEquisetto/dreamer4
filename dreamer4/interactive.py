@@ -365,7 +365,7 @@ def decode_single_packed_frame(
     z2 = _as_2d_packed(z_packed)
     z_bt = z2.unsqueeze(0).unsqueeze(0)  # (1,1,n_spatial,d_spatial)
     z_btLd = unpack_spatial_to_bottleneck(z_bt, k=packing_factor, d_bottleneck=d_bottleneck)
-    patches = decoder(z_btLd)  # (1,1,Np,Dp)
+    patches = decoder(z_btLd.to(torch.float32))  # (1,1,Np,Dp)
     frames = temporal_unpatchify(patches, H, W, C, patch)  # (1,1,C,H,W)
     return frames[0, 0].clamp(0, 1)
 
